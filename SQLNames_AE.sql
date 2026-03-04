@@ -14,12 +14,11 @@ FROM names;
 -- There are a total of 351,653,025 people registered in the dataset.
 
 -- 3. Which name had the most appearances in a single year in the dataset?
-SELECT name, MAX(num_registered) as maxregistered
-FROM names
-GROUP BY name
-ORDER BY maxregistered DESC
-LIMIT 1;
--- Linda had the most appearances in a single year, with 99,689 registered Lindas in a single year.
+select name, num_registered, year 
+from names
+order by num_registered DESC
+limit 1;
+-- Linda had the most appearances in a single year, with 99,689 registered Lindas in 1947.
 
 -- 4. What range of years are included?
 SELECT MIN(year), MAX(year)
@@ -48,18 +47,19 @@ LIMIT 1;
 -- There are more males registered than females in the dataset.
 
 -- 8. What are the most popular male and female names overall (i.e., the most total registrations)?
-SELECT name, gender, SUM(num_registered) as totalreg
+SELECT DISTINCT ON (gender) gender, name, SUM(num_registered) as total_registered
 FROM names
 GROUP BY name, gender
-ORDER BY totalreg DESC;
+ORDER BY gender, total_registered DESC;
+
 -- The most popular male name overall is James; the most popular female name overall is Mary.
 
 -- 9. What are the most popular boy and girl names of the first decade of the 2000s (2000 - 2009)?
-SELECT name, gender, SUM(num_registered) as totalreg
+SELECT DISTINCT ON (gender) gender, name, SUM(num_registered) as total_registered
 FROM names
 WHERE year BETWEEN 2000 AND 2009
 GROUP BY name, gender
-ORDER BY totalreg DESC;
+ORDER BY gender, total_registered DESC;
 -- The most popular boy name of 2000-2009 was Jacob; the most popular girl name during that time period was Emily.
 
 -- 10. Which year had the most variety in names (i.e. had the most distinct names)?
@@ -103,8 +103,8 @@ HAVING COUNT(DISTINCT gender) > 1;
 SELECT name
 FROM names
 GROUP BY name
-HAVING COUNT(year) = (2018-1880+1);
--- There are 136 total names that have made an appearance in every single year since 1880 in our dataset, such as Webster and Una.
+HAVING COUNT(DISTINCT year) = (2018-1880+1);
+-- There are 921 total names that have made an appearance in every single year since 1880 in our dataset, such as Webster and Una.
 
 -- 16. Find all names that have only appeared in one year.
 SELECT name
